@@ -14,22 +14,7 @@ dashboardPage(
         tabItems(
             tabItem(tabName = "dashboard1",
                     h2("Please paste a youtube URL, we will tell you which instruments are playing !"),
-                    # fluidRow(uiOutput("RegOrCtry")),
-                    # fluidRow(
-                    #     box(
-                    #       width = 8,
-                    #       # textInput("lienVideo", label = NULL, placeholder = "Paste your URL here"),
-                    #         selectInput("lienVideo", label = "Choose the video",
-                    #                     choices = c("Danube - Duo guitare/violon swing Tzigane" = "v=NUHdr0mPVPo",
-                    #                                 "Comfortably Numb Solo - Pink Floyd - Acoustic Guitar Cover" = "v=MRqjOuhZsoY",
-                    #                                 "Duduk Solo" = "v=BmC9I7uVwwc",
-                    #                                 "Jimi Hendrix On An Acoustic Guitar" = "v=P701paKEMXs",
-                    #                                 "Tchaïkovsky  - Mélodie pour violon et piano" = "v=23lmC4ArYzI",
-                    #                                 "Simon Frick - Violin plays 'Smells like Teen Spirit' by Nirvana" = "v=h3k4ou_9cUE"),
-                    #                     selected = NULL,
-                    #                     width = '100%'),
-                    #         actionButton("submitVideo", label = "Launch video"))
-                    # ),
+
                     
                     ###
                     fluidRow(
@@ -80,7 +65,7 @@ dashboardPage(
                                               "Perceptron" = "Perceptron0",
                                               "SVM sigmoid" = "SVMsigmoid1",
                                               "SVM linear" = "SVMlinear1"))),
-                      valueBoxOutput("pct_bien_classes_vc", width = 2),
+                      # valueBoxOutput("pct_bien_classes_vc", width = 2),
                       valueBoxOutput("pct_bien_classes_test", width = 2)),
                     fluidRow(
                       column(width = 6,

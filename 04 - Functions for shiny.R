@@ -17,31 +17,59 @@ download_mp_from_youtube <- function(link_html, best) {
   print("link_html")
   print(link_html)
   
-  system(paste0("youtube-dl ", link_html, " -x --audio-format mp3"))
-  lien <- str_split(link_html, "=")[[1]][2]
-  liste <- list.files("../Shiny/")
-  print(liste)
-  morceau <- paste0("../Tests/", lien, ".mp3")
+  withProgress(message = 'MP3 se charge',
+               detail = 'Cela peut prendre un moment...', value = 0, {
+                 incProgress(1/5)
+                 Sys.sleep(0.25)
+                 system(paste0("youtube-dl ", link_html, " -x --audio-format mp3"))
+               })
+  withProgress(message = 'MP3 ok !',
+               detail = 'Sauvegarde en cours...', value = 1/5, {
+                 incProgress(1/5)
+                 Sys.sleep(0.25)
+                 
+                 lien <- str_split(link_html, "=")[[1]][2]
+                 liste <- list.files("./")
+                 print(liste)
+                 morceau <- paste0("./Tests/", lien, ".mp3")
+                 
+                 NouveauMorceau <- liste[grep(liste, pattern=".*mp3.*")]
+                 
+                 file.rename(from = NouveauMorceau,
+                             to = paste0(lien, ".mp3"))
+                 
+                 file.copy(paste0("./", lien, ".mp3"), to = paste0("./Tests/", lien, ".mp3"))
+                 # file.remove(paste0("./", paste0(lien, ".mp3")))
+                 file.remove(paste0("./", lien, ".mp3"))
+               })
   
-  NouveauMorceau <- liste[grep(liste, pattern=".*mp3.*")]
-
-  file.rename(from = NouveauMorceau,
-              to = paste0(lien, ".mp3"))
-
-  file.copy(paste0("../Shiny/", lien, ".mp3"), to = paste0("../Tests/", lien, ".mp3"))
-  # file.remove(paste0("./", paste0(lien, ".mp3")))
-  file.remove(paste0("../Shiny/", lien, ".mp3"))
+  withProgress(message = 'Save OK',
+               detail = 'Preparation des variables explicatives', value = 2/5, {
+                 incProgress(1/5)
+                 Sys.sleep(0.25)
+                 b <- prepare_morceau_si_new(morceau, best)
+                 saveRDS(b, paste0("./Data/", lien, ".RDS"))
+               })
   
-  b <- prepare_morceau_si_new(morceau, best)
-  saveRDS(b, paste0("../Data/", lien, ".RDS"))
-  
-  print("Preparation de l animation")
-  graphe_dynamique_predictions(best, lien, b[[1]], chemin = "../Figures/Animation_", b[[3]])
-
-  print("Préparation du spectrogramme")
-  graphe_spectrogramme(morceau, lien, chemin = "../Figures/Spectro_")
+  withProgress(message = 'Variables OK',
+               detail = 'Graphe gif en cours...', value = 3/5, {
+                 incProgress(1/5)
+                 Sys.sleep(0.25)
+                 
+                 print("Preparation de l animation")
+                 graphe_dynamique_predictions(best, lien, b[[1]], chemin = "./Figures/Animation_", morceau)
+               })
+  withProgress(message = 'Graphe gif OK',
+               detail = 'Preparation du spectrogramme', value = 4/5, {
+                 incProgress(1/5)
+                 Sys.sleep(0.25)
+                 
+                 print("Préparation du spectrogramme")
+                 graphe_spectrogramme(morceau, lien, chemin = "./Figures/Spectro_")
+               })
   
 }
+
 
 
 #  PAGE 1 : Graphe des fréquences
@@ -97,8 +125,8 @@ prepare_morceau_si_new <- function(morceau, best) {
 
 #  PAGE 1 : Graphe dynamique prédictions
 # graphe_dynamique_predictions <- function(best, lien, donnees) {
-graphe_dynamique_predictions <- function(best, lien, donnees, chemin, sound) {
-
+graphe_dynamique_predictions <- function(best, lien, donnees, chemin, morceau) {
+  sound <- readMP3(morceau)
   
   predict2        <- as.data.frame(predict(best, donnees, type = "prob"))
   predict2$Temps  <- donnees$Temps

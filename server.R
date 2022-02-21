@@ -38,7 +38,7 @@ server <- function(input, output) {
         download_mp_from_youtube(input$lienVideo, best)
       }
       
-      c <- readRDS(paste0("../Data/", str_split(input$lienVideo, "=")[[1]][2], ".RDS"))
+      c <- readRDS(paste0("./Data/", str_split(input$lienVideo, "=")[[1]][2], ".RDS"))
       
     prev_pct_for_valueBox <<- c[[2]]
     morceau <<- c[[1]]
@@ -83,7 +83,7 @@ server <- function(input, output) {
       
 
     output$plotSpectrogramme <- renderImage({
-      list(src = paste0("../Figures/Spectro_", str_split(input$lienVideo, "=")[[1]][2],".jpg"),
+      list(src = paste0("./Figures/Spectro_", str_split(input$lienVideo, "=")[[1]][2],".jpg"),
                 width = 600,
            height = 400)
     },deleteFile=FALSE
@@ -91,7 +91,7 @@ server <- function(input, output) {
     
     # L'animation : DONE !
     output$legif <- renderImage({
-      list(src = paste0("../Figures/Animation_", str_split(input$lienVideo, "=")[[1]][2],".gif"),
+      list(src = paste0("./Figures/Animation_", str_split(input$lienVideo, "=")[[1]][2],".gif"),
                 contentType = 'image/gif',
            width = 600,
            height = 400)
