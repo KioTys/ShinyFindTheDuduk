@@ -98,19 +98,19 @@ bloc_VC <- function(don, bloc, i, p_rf, cost, PREV) {
   ridge <- cv.glmnet(donA.X, donA.Y, alpha = 0, family="multinomial")
   PREV_tmp[, "Ridge0"] <- predict(ridge, newx=donT.X, type="class") # Par defaut on utilise lambda.1se
   lambdaR[i] <- ridge$lambda.1se
-  #print("   RIDGE IS DONE!!")
+  print("   RIDGE IS DONE!!")
   
   ###################################
   lasso <- cv.glmnet(donA.X, donA.Y, alpha = 1, family="multinomial")
   PREV_tmp[, "LASSO0"] <- predict(lasso, newx=donT.X, type="class") # Par defaut on utilise lambda.1se
   lambdaL[i] <- lasso$lambda.1se
-  #print("   LASSO IS DONE!!")
+  print("   LASSO IS DONE!!")
   
   ###################################
   elast <- cv.glmnet(donA.X, donA.Y, alpha = 0.5, family="multinomial")
   PREV_tmp[, "ElasticNet0"] <- predict(elast, newx=donT.X, type="class") # Par defaut on utilise lambda.1se
   lambdaE[i] <- elast$lambda.1se
-  #print("   ELASTIC-NET IS DONE!!")
+  print("   ELASTIC-NET IS DONE!!")
   
   for (j in 1:dim(p_rf)[1]) {
     name <- paste0("RandomForest",j)
@@ -120,7 +120,7 @@ bloc_VC <- function(don, bloc, i, p_rf, cost, PREV) {
                                   ntree = p_rf$ntree[j],
                                   mtry  = p_rf$mtry[j])
     PREV_tmp[, name] <- as.vector(predict(random.forest, donT, type="class"))
-    #print(paste0("   RANDOM FOREST (NTREE = ", p_rf$ntree[j], ", MTRY = ",p_rf$mtry[j], ") IS DONE!!"))
+    print(paste0("   RANDOM FOREST (NTREE = ", p_rf$ntree[j], ", MTRY = ",p_rf$mtry[j], ") IS DONE!!"))
     
   }
   
@@ -132,7 +132,7 @@ bloc_VC <- function(don, bloc, i, p_rf, cost, PREV) {
                       kernel = "linear",
                       cost   = cost[j])
     PREV_tmp[, name] <- as.vector(predict(svm_linear, donT, type="class"))
-    #print(paste0("   SVM LINEAR (C = ", cost[j], ") IS DONE!!"))
+    print(paste0("   SVM LINEAR (C = ", cost[j], ") IS DONE!!"))
     
     name <- paste0("SVMpolynomial",j)
     ###################################
@@ -141,7 +141,7 @@ bloc_VC <- function(don, bloc, i, p_rf, cost, PREV) {
                           kernel = "polynomial",
                           cost   = cost[j])
     PREV_tmp[, name] <- as.vector(predict(svm_polynomial, donT, type="class"))
-    #print(paste0("   SVM POLYNOMIAL (C = ", cost[j], ") IS DONE!!"))
+    print(paste0("   SVM POLYNOMIAL (C = ", cost[j], ") IS DONE!!"))
     
     name <- paste0("SVMradial",j)
     ###################################
@@ -150,7 +150,7 @@ bloc_VC <- function(don, bloc, i, p_rf, cost, PREV) {
                       kernel = "radial",
                       cost   = cost[j])
     PREV_tmp[, name] <- as.vector(predict(svm_radial, donT, type="class"))
-    #print(paste0("   SVM RADIAL (C = ", cost[j], ") IS DONE!!"))
+    print(paste0("   SVM RADIAL (C = ", cost[j], ") IS DONE!!"))
     
     name <- paste0("SVMsigmoid",j)
     ###################################
@@ -159,7 +159,7 @@ bloc_VC <- function(don, bloc, i, p_rf, cost, PREV) {
                        kernel = "sigmoid",
                        cost   = cost[j])
     PREV_tmp[, name] <- as.vector(predict(svm_sigmoid, donT, type="class"))
-    #print(paste0("   SVM SIGMOID (C = ", cost[j], ") IS DONE!!"))
+    print(paste0("   SVM SIGMOID (C = ", cost[j], ") IS DONE!!"))
   }
   
   ###################################
@@ -175,7 +175,7 @@ bloc_VC <- function(don, bloc, i, p_rf, cost, PREV) {
   best.iter <- gbm.perf(boost,method="cv", plot.it=FALSE)
   tmp <- predict(boost, donT, n.trees=best.iter, type = "response")
   PREV_tmp[,"GradientBoosting0"] <- levels(don$Instrument)[apply(tmp, FUN=which.max, MARGIN=1)]
-  #print("   GRADIENT BOOSTING IS DONE!!")
+  print("   GRADIENT BOOSTING IS DONE!!")
   
   ###################################
   if (!interactions & !carres) {
@@ -185,7 +185,7 @@ bloc_VC <- function(don, bloc, i, p_rf, cost, PREV) {
                  maxit  = 500,
                  linout = TRUE)
     PREV_tmp[,"Perceptron0"] <- predict(resN, donT, type = "class")
-    #print("   PERCEPTRON IS DONE!!")
+    print("   PERCEPTRON IS DONE!!")
   } else {
     #print("   TOO MANY VARIABLES FOR PERCEPTRON!!")
   }

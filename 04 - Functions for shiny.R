@@ -70,7 +70,7 @@ prepare_morceau_si_new <- function(morceau, best) {
   freqs  <- c(60, 200, 640, 1625, 7000, 10000)
   donnees <- PrepMorceau_Cut_Overlap_Par(sound, instrument,
                                          d_seq = 10, 
-                                         overlap = 5, 
+                                         overlap = 1, 
                                          freqs = freqs, 
                                          labels = labels,
                                          workers = 2)
@@ -91,7 +91,7 @@ prepare_morceau_si_new <- function(morceau, best) {
   # %>%
   #   mutate (morceau = lien)
   
-  return(list(donnees, a, sound))
+  return(list(donnees, a))
 }
 
 
@@ -122,7 +122,7 @@ graphe_dynamique_predictions <- function(best, lien, donnees, chemin, sound) {
   dynamic <- static + transition_reveal(Temps)
 
   
-  animate(dynamic, height = 500, width = 1000, duration = length(sound@left)/sound@samp.rate) # A VOIR: IL FAUT PASSER SOUND EN ARGUMENT
+  animate(dynamic, height = 500, width = 1000, duration = length(sound@left)/sound@samp.rate, nframes = round(length(sound@left)/sound@samp.rate, 0))
   
   
   anim_save(filename = paste0(chemin, lien,".gif"))
