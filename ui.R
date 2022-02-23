@@ -49,12 +49,20 @@ dashboardPage(
                     )
             )),
             tabItem(tabName = "dashboard2",
-                    h2("Les performances de nos modèles"),
-                    fluidRow(
-                      box(width = NULL,
-                          sliderInput("nbest_to_save","nb of models retenus",1,8,3),
-                          plotOutput("plot1"))
-                    ),
+                    tabsetPanel(tabPanel("Validation",
+                                         h2("Les performances de nos modèles"),
+                                         fluidRow(
+                                           box(width = NULL,
+                                               sliderInput("nbest_to_save","nb of models retenus",1,8,3),
+                                               plotOutput("plot1"))
+                                         )),
+                                tabPanel("Test",
+                                         h2("Les performances de nos modèles"),
+                                         fluidRow(
+                                           box(width = NULL,
+                                               sliderInput("nbest_to_save","nb of models retenus",1,8,3),
+                                               plotOutput("plot2"))
+                                         ))),
                     h2("Résultats par modèle"),
                     fluidRow(
                       column(width = 6,
@@ -65,7 +73,7 @@ dashboardPage(
                                               "Perceptron" = "Perceptron0",
                                               "SVM sigmoid" = "SVMsigmoid1",
                                               "SVM linear" = "SVMlinear1"))),
-                      # valueBoxOutput("pct_bien_classes_vc", width = 2),
+                      valueBoxOutput("pct_bien_classes_vc", width = 2),
                       valueBoxOutput("pct_bien_classes_test", width = 2)),
                     fluidRow(
                       column(width = 6,
@@ -77,7 +85,7 @@ dashboardPage(
             tabItem(tabName = "dashboard3",
                     h2("Comparaison des prévisions sur le morceau choisi"),
                     fluidRow(
-                      box(width = 12, plotOutput("graphe_comp"))
+                      box(width = 12, height = 550, plotOutput("graphe_comp"))
                     )
             )
         )

@@ -64,7 +64,7 @@ download_mp_from_youtube <- function(link_html, best) {
                  incProgress(1/5)
                  Sys.sleep(0.25)
                  
-                 print("Préparation du spectrogramme")
+                 print("Preparation du spectrogramme")
                  graphe_spectrogramme(morceau, lien, chemin = "./Figures/Spectro_")
                })
   
@@ -74,19 +74,21 @@ download_mp_from_youtube <- function(link_html, best) {
 
 #  PAGE 1 : Graphe des fréquences
 graphe_spectrogramme <- function(morceau, lien, chemin) {
-    sound   <- readMP3(morceau)
-    sound_c <- cutw(sound, from = 40, to = 50, f = sound@samp.rate)
-    jpeg(paste0(chemin, lien,".jpg"), width = 20, height = 15, units = "cm", res = 144)
-    spectro(sound_c, sound@samp.rate, 
-            flim = c(0,5), 
-            flog = T, 
-            fastdisp = T, 
-            osc = T, 
-            grid = T,
-            tlab = "Temps (s)",
-            flab = "Fréquence (kHz)",
-            title = "Spectrogramme du morceau")
-    dev.off()
+  sound   <- readMP3(morceau)
+  t1 <- round(length(sound@left)/sound@samp.rate/2,0)
+  t2 <- min(t1+10, round(length(sound@left)/sound@samp.rate,0))
+  sound_c <- cutw(sound, from = t1, to = t2, f = sound@samp.rate)
+  jpeg(paste0(chemin, lien,".jpg"), width = 20, height = 15, units = "cm", res = 144)
+  spectro(sound_c, sound@samp.rate, 
+          flim = c(0,5), 
+          flog = T, 
+          fastdisp = T, 
+          osc = T, 
+          grid = T,
+          tlab = "Temps (s)",
+          flab = "Frequence (kHz)",
+          title = "Spectrogramme du morceau")
+  dev.off()
 }
 
 
@@ -148,14 +150,14 @@ graphe_dynamique_predictions <- function(best, lien, donnees, chemin, morceau) {
   static
   
   dynamic <- static + transition_reveal(Temps)
-
+  
   
   animate(dynamic, height = 500, width = 1000, duration = length(sound@left)/sound@samp.rate, nframes = round(length(sound@left)/sound@samp.rate, 0))
   
   
   anim_save(filename = paste0(chemin, lien,".gif"))
-
-  }
+  
+}
 
 ################################
 #           PAGE 2             #
@@ -178,7 +180,10 @@ graph_model_change_color <- function(summary_plot, nbest_to_save) {
     scale_color_manual(values = c("TRUE"  = "green",
                                   "FALSE" = "red"),
                        aesthetics = c("color", "fill")) +
-    theme(axis.text.x = element_text(angle = 45, hjust=1),
+    theme(axis.text.x = element_text(angle = 45, hjust=1, size = 16),
+          axis.text.y = element_text(size = 16),
+          axis.title.x = element_text(size = 16),
+          axis.title.y = element_text(size = 16),
           panel.background = element_rect(fill="white"),
           legend.position = "none")
   return(gg)
@@ -206,7 +211,7 @@ graph_model_matrice_confusion <- function(PREV, model_selected) {
           axis.title.x = element_text(size = 16),
           axis.title.y = element_text(size = 16),
           panel.background = element_rect(fill="white"))
-  }
+}
 
 # names(df_alluvial)
 
@@ -220,7 +225,7 @@ graph_model_alluvial_representation <- function(PREV, model_selected, don_test) 
   df_alluvial$Reference  <- as.factor(df_alluvial$Reference)
   df <- df_alluvial
   names(df) <- c("Prediction", "Original label", "Freq")
-
+  
   ll <- unique(df$`Original label`)
   grid.col <- rainbow(length(ll))
   grid.col <- setNames(grid.col, ll)
@@ -261,7 +266,7 @@ graph_model_alluvial_representation <- function(PREV, model_selected, don_test) 
       axis.text.x=element_text(size=16),
       legend.position = "none")
   return(q)
-  }
+}
 
 # PAGE 2 : Calcul du % de bien classés
 calcul_bien_classes <- function(ma_table, model_selected) {
@@ -310,10 +315,19 @@ graphe_predictionpar_modele <- function(donnees) {
     gather(key = "Instrument", value = "Proba", 2:5)
   
   g <- ggplot(df) +
-      geom_line(aes(x = Temps, y = Proba*100, color = Model), size = 2) +
-      facet_wrap(.~Instrument, ncol = 2, nrow = 2, scales = "free_x") +
-      ylab("Probabilité (%)") +
-      theme_bw()
+    geom_line(aes(x = Temps, y = Proba*100, color = Model), size = 2) +
+    facet_wrap(.~Instrument, ncol = 2, nrow = 2, scales = "free_x") +
+    xlab("Time (s)") +
+    ylab("Probability (%)") +
+    theme_bw()+
+    theme(axis.text.x=element_text(size=16),
+          axis.text.y=element_text(size=16),
+          axis.title.x=element_text(size=16),
+          axis.title.y=element_text(size=16),
+          strip.text.x = element_text(size = 16),
+          legend.position = "top",
+          legend.text = element_text(size = 16),
+          legend.title = element_text(size = 16))
   # ggsave(g, filename = "CompModel.jpg", width= 20, units = "cm")
   return(g)
 }

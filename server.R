@@ -103,7 +103,7 @@ server <- function(input, output) {
     ################################
     
     # PAGE 3 : Graphes 2 par 2 (comparaison des modèles sur un morceau donné)
-    output$graphe_comp <- renderPlot({graphe_predictionpar_modele(morceau)})
+    output$graphe_comp <- renderPlot({graphe_predictionpar_modele(morceau)}, height = 500)
     
     
     }
@@ -114,7 +114,8 @@ server <- function(input, output) {
     ################################
 
       # Préparation des données "summary_plot" pour le 1er graphique
-      summary <- apply(PREV_test[,-1], 2, PredErr, Y=PREV_test[,1])
+      ## Validation
+      summary <- apply(PREV[,-1], 2, PredErr, Y=PREV[,1])
       nbest <- which.min(summary)
       names(summary)[nbest]
       
@@ -124,6 +125,18 @@ server <- function(input, output) {
       summary_plot$NumMod  <- as.integer(NumMod(summary_plot$Model))
       
       output$plot1 <- renderPlot({graph_model_change_color(summary_plot, input$nbest_to_save)})
+      
+      ## Test
+      summary2 <- apply(PREV_test[,-1], 2, PredErr, Y=PREV_test[,1])
+      nbest <- which.min(summary2)
+      names(summary2)[nbest]
+      
+      summary_plot2 <- data.frame(Model   = names(summary2),
+                                 Failure = summary2)
+      summary_plot2$NameMod <- NameMod(summary_plot2$Model)
+      summary_plot2$NumMod  <- as.integer(NumMod(summary_plot2$Model))
+      
+      output$plot2 <- renderPlot({graph_model_change_color(summary_plot2, input$nbest_to_save)})
 
       output$mc_vc <- renderPlot({graph_model_matrice_confusion(PREV_test, model_selected=input$chooseModel)})
       output$mc_test <- renderPlot({graph_model_matrice_confusion(PREV_test, model_selected=input$chooseModel)})
